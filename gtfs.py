@@ -1,19 +1,17 @@
 import requests
 import zipfile
 import io
-from dotenv import dotenv_values
 
-config = dotenv_values(".env")
-login = config.get("LOGIN")
-password = config.get("PASSWORD")
-url = "http://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS"
 
-response = requests.get(url, auth=(login, password))
-if response.status_code == 404:
-    print("Check credentials or portal access")
-    exit()
-response.raise_for_status()
+def download_gtfs(login, password):
+    url = "http://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS"
 
-with zipfile.ZipFile(io.BytesIO(response.content)) as z:
-    print(z.namelist())  # List files: agency.txt, stops.txt, etc.
-    z.extractall("sptrans_gtfs")
+    response = requests.get(url, auth=(login, password))
+    if response.status_code == 404:
+        print("Check credentials or portal access")
+        exit()
+    response.raise_for_status()
+
+    with zipfile.ZipFile(io.BytesIO(response.content)) as z:
+        print(z.namelist())  # List files: agency.txt, stops.txt, etc.
+        z.extractall("sptrans_gtfs")
