@@ -3,8 +3,8 @@ import zipfile
 import io
 
 
-def download_gtfs(login, password):
-    url = "http://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS"
+def download_gtfs(url, login, password):
+    # url = "http://www.sptrans.com.br/umbraco/Surface/PerfilDesenvolvedor/BaixarGTFS"
 
     response = requests.get(url, auth=(login, password))
     if response.status_code == 404:
