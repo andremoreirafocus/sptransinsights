@@ -1,10 +1,11 @@
-Este projeto faz download de informações da SPTRANS:
-- posição dos ônibus de SP usando a API da SPTRANS
+Este projeto extrai a informação de posição dos ônibus a partir da API da SPTRANS e envia o payload comprimido para um tópico Kafka.
 
-Credenciais necessárias se encontram no arquivo .env do projeto usando as seguintes variáveis:
+Configurações necessárias no arquivo .env do projeto:
 API_BASE_URL = "https://api.olhovivo.sptrans.com.br/v2.1"
 TOKEN =  <insira o seu token>
 INTERVALO = 120  # 2 minutos em segundos
+KAFKA_BROKER = "localhost:9092"
+KAFKA_TOPIC = "bus_positions"
 
 Para instalar os requisitos:
 pip install -r requirements.txt
