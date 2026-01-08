@@ -1,20 +1,6 @@
 from kafka import KafkaProducer
 import json
 
-
-def sendKafka2(topic, message, broker):
-    producer = KafkaProducer(
-        bootstrap_servers=broker,
-        value_serializer=lambda v: json.dumps(v).encode("utf-8"),
-    )
-    producer.send(topic, message)
-    producer.flush()
-    producer.close()
-
-
-from kafka import KafkaProducer
-import json
-
 # This variable will store our producer so we don't reconnect every time
 _producer = None
 
