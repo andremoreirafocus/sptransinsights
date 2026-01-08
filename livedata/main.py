@@ -1,6 +1,5 @@
 from datetime import datetime
 from dotenv import dotenv_values
-from src.services.extract_gtfs_files import extract_gtfs_files
 from src.services.buses_positions import (
     extract_buses_positions,
     get_buses_positions_summary,
@@ -10,12 +9,6 @@ from src.infra.storage import save_data_to_json_file
 
 def main():
     config = dotenv_values(".env")
-    extract_gtfs_files(
-        url=config.get("GTFS_URL"),
-        login=config.get("LOGIN"),
-        password=config.get("PASSWORD"),
-        downloads_folder=config.get("DOWNLOADS_FOLDER"),
-    )
     buses_positions = extract_buses_positions(
         token=config.get("TOKEN"),
         base_url=config.get("API_BASE_URL"),
