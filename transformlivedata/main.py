@@ -5,6 +5,7 @@ from src.services.transforms import (
 import logging
 from logging.handlers import RotatingFileHandler
 
+
 LOG_FILENAME = "transformlivedata.log"
 
 # In Airflow just remove this logging configuration block
@@ -22,12 +23,14 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    logger.info("Starting transformation process...")
+    print("Starting transformation process...")
     config = dotenv_values(".env")
     source_bucket = config["SOURCE_BUCKET"]
     app_folder = config["APP_FOLDER"]
-    db_connection = None
     table_name = config["TABLE_NAME"]
-    transform_position(source_bucket, app_folder, db_connection, table_name)
+    transform_position(source_bucket, app_folder, table_name)
 
-    if __name__ == "__main__":
-        main()
+
+if __name__ == "__main__":
+    main()
