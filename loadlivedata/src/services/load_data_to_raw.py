@@ -2,6 +2,10 @@ from src.infra.get_minio_connection_data import get_minio_connection_data
 from src.infra.minio_functions import write_generic_bytes_to_minio
 from datetime import datetime
 import json
+import logging
+
+# This logger inherits the configuration from the root logger in main.py
+logger = logging.getLogger(__name__)
 
 
 def load_data_to_raw(data, raw_bucket_name, app_folder, hour_minute):

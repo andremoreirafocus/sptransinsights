@@ -1,12 +1,16 @@
 from kafka import KafkaConsumer
 import json
 from src.services.load_data_to_raw import load_data_to_raw
+import logging
+
+# This logger inherits the configuration from the root logger in main.py
+logger = logging.getLogger(__name__)
 
 
 def start_consumer(broker, topic, bucket_name, app_folder):
     num_read_messages = 0
 
-    print(f"[*] Connecting to {broker}...")
+    logger.info(f"[*] Connecting to {broker}...")
 
     # Initialize the Consumer
     consumer = KafkaConsumer(
@@ -20,23 +24,23 @@ def start_consumer(broker, topic, bucket_name, app_folder):
         group_id="bus_monitor_group",
     )
 
-    print(f"[*] Waiting for messages on topic: {topic}. To exit press CTRL+C")
-    print(f"Total messages read: {num_read_messages}\n")
+    logger.info(f"[*] Waiting for messages on topic: {topic}. To exit press CTRL+C")
+    logger.info(f"Total messages read: {num_read_messages}\n")
 
     try:
         for message in consumer:
             # 'message.value' is now a Python dictionary thanks to value_deserializer
             data_json = message.value
-            print(f"--- New Message Received at {message.timestamp} ---")
+            logger.info(f"--- New Message Received at {message.timestamp} ---")
 
             data = json.loads(data_json)
 
             if isinstance(data, dict):
                 total_qv = 0
                 for line in data.get("l", []):
-                    # print(f"Line: {line.get('qv')}")
+                    # logger.info(f"Line: {line.get('qv')}")
                     total_qv += int(line.get("qv", 0))
-                print(
+                logger.info(
                     f"Received data for {total_qv} vehicles from {len(data.get('l', []))} bus lines."
                 )
                 load_data_to_raw(
@@ -49,11 +53,11 @@ def start_consumer(broker, topic, bucket_name, app_folder):
                 )
 
             else:
-                print("Not a valid payload format.")
-                # print(f"Payload: {payload}")
+                logger.error("Not a valid payload format.")
+                # logger.info(f"Payload: {payload}")
             num_read_messages += 1
-            print(f"Total messages read: {num_read_messages}\n")
+            logger.info(f"Total messages read: {num_read_messages}\n")
     except KeyboardInterrupt:
-        print("\nStopping consumer...")
+        logger.info("\nStopping consumer...")
     finally:
         consumer.close()
