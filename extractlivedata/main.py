@@ -13,6 +13,7 @@ from logging.handlers import RotatingFileHandler
 
 LOG_FILENAME = "extractlivedata.log"
 
+# In Airflow just remove this logging configuration block
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
