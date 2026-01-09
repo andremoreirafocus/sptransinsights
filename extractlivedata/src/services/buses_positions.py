@@ -16,7 +16,7 @@ def extract_buses_positions(base_url, token):
             return
     except Exception as e:
         print(f"Error connecting: {e}")
-        return
+        return None
 
     try:
         posicao_url = f"{base_url}/Posicao"
@@ -33,10 +33,18 @@ def extract_buses_positions(base_url, token):
 
     except Exception as e:
         print(f"Error during execution: {e}")
+        return None
 
 
 def get_buses_positions_summary(buses_positions):
-    reference_time = buses_positions.get("hr", "N/A")
-    lines = buses_positions.get("l", [])  # 'l' contém a lista de lines e veículos
-    total_vehicles = sum([len(line.get("vs", [])) for line in lines])
-    return reference_time, total_vehicles
+    if not isinstance(buses_positions, dict):
+        print(f"Incorrect data type: {type(buses_positions)}")
+        return "NaN", "NaN"
+    try:
+        reference_time = buses_positions.get("hr", "NaN")
+        lines = buses_positions.get("l", [])  # 'l' contém a lista de lines e veículos
+        total_vehicles = sum([len(line.get("vs", [])) for line in lines])
+        return reference_time, total_vehicles
+    except Exception as e:
+        print(f"Error processing positions summary: {e}")
+        return "NaN", "NaN"
