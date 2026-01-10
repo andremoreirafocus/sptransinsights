@@ -74,11 +74,10 @@ def start_consumer(broker, topic, bucket_name, app_folder):
             if not message_structure_is_valid(data):
                 num_invalid_messages += 1
                 logger.warning(f"Total invalid messages : {num_invalid_messages}\n")
-                return
+                # return
                 continue
-            hour_minute = (
-                data.get("payload").get("hr").replace(":", ""),
-            )  # e.g., "15:30" -> "1530"
+            hour_minute = data.get("payload").get("hr").replace(":", "")
+            # e.g., "15:30" -> "1530"
             total_qv = 0
             payload = data.get("payload")
             for line in payload.get("l", []):
