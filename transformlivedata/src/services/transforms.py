@@ -1,9 +1,11 @@
-from src.infra.db import db_cursor
+from src.infra.db import get_db_connection
 from src.infra.minio_functions import read_file_from_minio
 from src.infra.get_minio_connection_data import get_minio_connection_data
 import logging
 import json
 from dateutil import parser
+from psycopg2.extras import execute_values
+
 
 # This logger inherits the configuration from the root logger in main.py
 logger = logging.getLogger(__name__)
@@ -106,23 +108,20 @@ def get_positions_table_from_raw(raw_positions):
             #     "veiculo_lat": vehicle.get("py"),
             #     "veiculo_long": vehicle.get("px"),
             # }
-            vehicle_record = {
-                "veiculo_id": int(vehicle.get("p")),
-                # "hora": payload.get("hr"),
-                "timestamp_extracao": metadata.get("extracted_at"),
-                "linha_lt": line.get("c"),
-                "linha_code": int(line.get("cl")),
-                "linha_sentido": int(line.get("sl")),
-                "lt_destino": line.get("lt0"),
-                "lt_origem": line.get("lt1"),
-                "veiculo_prefixo": int(vehicle.get("p")),
-                "veiculo_acessivel": bool(vehicle.get("a")),
-                # "veiculo_ts": vehicle.get("ta"),
-                "veiculo_ts": parser.parse(vehicle.get("ta")),
-                "veiculo_lat": float(vehicle.get("py")),
-                "veiculo_long": float(vehicle.get("px")),
-            }
-
+            vehicle_record = (
+                metadata.get("extracted_at"),  # timestamp_extracao
+                int(vehicle.get("p")),  # veiculo_id
+                line.get("c"),  # linha_lt
+                int(line.get("cl")),  # linha_code
+                int(line.get("sl")),  # linha_sentido
+                line.get("lt0"),  # lt_destino
+                line.get("lt1"),  # lt_origem
+                int(vehicle.get("p")),  # veiculo_prefixo
+                bool(vehicle.get("a")),  # veiculo_acessivel
+                parser.parse(vehicle.get("ta")),  # veiculo_ts
+                float(vehicle.get("py")),  # veiculo_lat
+                float(vehicle.get("px")),  # veiculo_long
+            )
             print(vehicle_record)
             number_of_vehicles += 1
             positions_table.append(vehicle_record)
@@ -146,19 +145,41 @@ def transform_position(source_bucket, app_folder, table_name):
     positions_table = get_positions_table_from_raw(raw_positions)
     if not positions_table:
         logger.error("No valid position records found after transformation.")
-    return
-    TRANSFORMATION_SQL = """
-    INSERT INTO trusted.my_fact_table (col1, col2, col3)
-    SELECT
-        col1,
-        col2,
-        col3
-    FROM staging.my_raw_table
-    WHERE ingestion_date = %(ingestion_date)s;
     """
-    ingestion_date = "2024-01-01"  # Example ingestion date
-    params = {"ingestion_date": ingestion_date}
-    with db_cursor() as cur:
-        cur.execute(TRANSFORMATION_SQL, params)  # execute arbitrary SQL via psycopg2.
+    Insert 10k+ items from memory list.
+    Assumes list format: (timestamp_extracao, veiculo_id, linha_lt, linha_code, 
+                          linha_sentido, lt_destino, lt_origem, veiculo_prefixo, 
+                          veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
+    """
+    conn = get_db_connection()
+
+    cur = conn.cursor()
+
+    insert_sql = """
+    INSERT INTO trusted.posicoes (
+        timestamp_extracao, veiculo_id, linha_lt, linha_code, linha_sentido,
+        lt_destino, lt_origem, veiculo_prefixo, veiculo_acessivel, veiculo_ts,
+        veiculo_lat, veiculo_long
+    ) VALUES %s
+    """
+
+    execute_values(cur, insert_sql, positions_table, page_size=1000)  # Batch internally
+    conn.commit()
+    cur.close()
+    conn.close()
+    # return
+    # TRANSFORMATION_SQL = """
+    # INSERT INTO trusted.my_fact_table (col1, col2, col3)
+    # SELECT
+    #     col1,
+    #     col2,
+    #     col3
+    # FROM staging.my_raw_table
+    # WHERE ingestion_date = %(ingestion_date)s;
+    # """
+    # ingestion_date = "2024-01-01"  # Example ingestion date
+    # params = {"ingestion_date": ingestion_date}
+    # with db_cursor() as cur:
+    #     cur.execute(TRANSFORMATION_SQL, params)  # execute arbitrary SQL via psycopg2.
 
     print("Position transformed successfully.")
