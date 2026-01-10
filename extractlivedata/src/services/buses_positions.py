@@ -42,6 +42,24 @@ def extract_buses_positions(base_url, token):
         return None
 
 
+def buses_positions_response_is_valid(buses_positions):
+    """
+    Validate the structure of the incoming buses_positions.
+    :param buses_positions: The buses_positions to validate
+    :return: True if valid, False otherwise
+    """
+    if not isinstance(buses_positions, dict):
+        logger.error("Payload does not have a valid structure.")
+        logger.error(f"Payload content: {buses_positions}")
+        return False
+    required_fields = ["hr", "l"]
+    for field in required_fields:
+        if field not in buses_positions:
+            logger.error(f"Missing required payload field: {field}")
+            return False
+    return True
+
+
 def get_buses_positions_summary(buses_positions):
     if not isinstance(buses_positions, dict):
         logger.error(f"Incorrect data type: {type(buses_positions)}")

@@ -2,6 +2,7 @@ from datetime import datetime
 from dotenv import dotenv_values
 from src.services.buses_positions import (
     extract_buses_positions,
+    buses_positions_response_is_valid,
     get_buses_positions_summary,
 )
 from src.infra.storage import save_data_to_json_file
@@ -34,6 +35,9 @@ def main():
             token=config.get("TOKEN"),
             base_url=config.get("API_BASE_URL"),
         )
+        if not buses_positions_response_is_valid(buses_positions_payload):
+            logger.error("Invalid buses positions response structure. Skipping...")
+            continue
         reference_time, total_vehicles = get_buses_positions_summary(
             buses_positions_payload
         )
