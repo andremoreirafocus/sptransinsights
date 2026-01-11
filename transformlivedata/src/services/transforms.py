@@ -5,6 +5,7 @@ import logging
 import json
 from dateutil import parser
 from psycopg2.extras import execute_values
+from psycopg2 import DatabaseError, InterfaceError
 
 
 # This logger inherits the configuration from the root logger in main.py
@@ -21,7 +22,11 @@ def transform_position(source_bucket, app_folder, table_name):
     if not positions_table:
         logger.error("No valid position records found after transformation.")
         return
-    save_positions_to_db(positions_table, table_name)
+    try:
+        save_positions_to_db(positions_table, table_name)
+    except Exception as e:
+        logger.error(f"Error saving positions to DB: {e}")
+        return
     logger.info("Positions transformed successfully.")
 
 
@@ -142,13 +147,14 @@ def data_structure_is_valid(data):
     return True
 
 
-def save_positions_to_db(positions_table, table_name):
+def save_positions_to_db_(positions_table, table_name):
     """
     Insert 10k+ items from memory list.
     Assumes list format: (timestamp_extracao, veiculo_id, linha_lt, linha_code,
                           linha_sentido, lt_destino, lt_origem, veiculo_prefixo,
                           veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
     """
+
     conn = get_db_connection()
 
     cur = conn.cursor()
@@ -165,3 +171,54 @@ def save_positions_to_db(positions_table, table_name):
     conn.commit()
     cur.close()
     conn.close()
+
+
+def save_positions_to_db(positions_table, table_name):
+    """
+    Insert 10k+ items from memory list.
+    Assumes list format: (timestamp_extracao, veiculo_id, linha_lt, linha_code,
+                          linha_sentido, lt_destino, lt_origem, veiculo_prefixo,
+                          veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
+    """
+
+    conn = None
+    try:
+        # 1. Initialize connection and cursor
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        insert_sql = f"""
+        INSERT INTO {table_name} (
+            timestamp_extracao, veiculo_id, linha_lt, linha_code, linha_sentido,
+            lt_destino, lt_origem, veiculo_prefixo, veiculo_acessivel, veiculo_ts,
+            veiculo_lat, veiculo_long
+        ) VALUES %s
+        """
+
+        # 2. Execute the batch insert
+        execute_values(cur, insert_sql, positions_table, page_size=1000)
+
+        # 3. Commit only if execution succeeds
+        conn.commit()
+        print(f"Successfully inserted {len(positions_table)} rows into {table_name}")
+
+    except (DatabaseError, InterfaceError) as db_err:
+        # Rollback the transaction if any database error occurs
+        if conn:
+            conn.rollback()
+        logging.error(f"Database error during insert into {table_name}: {db_err}")
+        raise  # Re-raise so the orchestrator knows the pipeline failed
+
+    except Exception as e:
+        # Catch unexpected Python errors
+        if conn:
+            conn.rollback()
+        logging.error(f"Unexpected error during transformation: {e}")
+        raise
+
+    finally:
+        # 4. ALWAYS close the connection, regardless of success or failure
+        if conn:
+            cur.close()
+            conn.close()
+            print("Database connection closed.")
