@@ -60,7 +60,7 @@ def load_positions(source_bucket, app_folder):
 def get_positions_table_from_raw(raw_positions):
     def get_record_from_raw(vehicle, line, metadata):
         vehicle_record = (
-            metadata.get("extracted_at"),  # timestamp_extracao
+            parser.parse(metadata.get("extracted_at")),  # extracao_ts
             int(vehicle.get("p")),  # veiculo_id
             line.get("c"),  # linha_lt
             int(line.get("cl")),  # linha_code
@@ -147,10 +147,10 @@ def data_structure_is_valid(data):
     return True
 
 
-def save_positions_to_db_(positions_table, table_name):
+def save_positions_to_db_no_exception_handling(positions_table, table_name):
     """
     Insert 10k+ items from memory list.
-    Assumes list format: (timestamp_extracao, veiculo_id, linha_lt, linha_code,
+    Assumes list format: (extracao_ts, veiculo_id, linha_lt, linha_code,
                           linha_sentido, lt_destino, lt_origem, veiculo_prefixo,
                           veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
     """
@@ -161,7 +161,7 @@ def save_positions_to_db_(positions_table, table_name):
 
     insert_sql = f"""
     INSERT INTO {table_name} (
-        timestamp_extracao, veiculo_id, linha_lt, linha_code, linha_sentido,
+        extracao_ts, veiculo_id, linha_lt, linha_code, linha_sentido,
         lt_destino, lt_origem, veiculo_prefixo, veiculo_acessivel, veiculo_ts,
         veiculo_lat, veiculo_long
     ) VALUES %s
@@ -176,7 +176,7 @@ def save_positions_to_db_(positions_table, table_name):
 def save_positions_to_db(positions_table, table_name):
     """
     Insert 10k+ items from memory list.
-    Assumes list format: (timestamp_extracao, veiculo_id, linha_lt, linha_code,
+    Assumes list format: (extracao_ts, veiculo_id, linha_lt, linha_code,
                           linha_sentido, lt_destino, lt_origem, veiculo_prefixo,
                           veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
     """
@@ -189,7 +189,7 @@ def save_positions_to_db(positions_table, table_name):
 
         insert_sql = f"""
         INSERT INTO {table_name} (
-            timestamp_extracao, veiculo_id, linha_lt, linha_code, linha_sentido,
+            extracao_ts, veiculo_id, linha_lt, linha_code, linha_sentido,
             lt_destino, lt_origem, veiculo_prefixo, veiculo_acessivel, veiculo_ts,
             veiculo_lat, veiculo_long
         ) VALUES %s
