@@ -1,12 +1,9 @@
-from src.infra.db import get_db_connection
+from src.infra.db import bulk_insert_data_table
 from src.infra.minio_functions import read_file_from_minio
 from src.infra.get_minio_connection_data import get_minio_connection_data
-import logging
 import json
 from dateutil import parser
-from psycopg2.extras import execute_values
-from psycopg2 import DatabaseError, InterfaceError
-
+import logging
 
 # This logger inherits the configuration from the root logger in main.py
 logger = logging.getLogger(__name__)
@@ -147,17 +144,13 @@ def data_structure_is_valid(data):
     return True
 
 
-def save_positions_to_db_no_exception_handling(positions_table, table_name):
+def save_positions_to_db(positions_table, table_name):
     """
     Insert 10k+ items from memory list.
     Assumes list format: (extracao_ts, veiculo_id, linha_lt, linha_code,
                           linha_sentido, lt_destino, lt_origem, veiculo_prefixo,
                           veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
     """
-
-    conn = get_db_connection()
-
-    cur = conn.cursor()
 
     insert_sql = f"""
     INSERT INTO {table_name} (
@@ -167,58 +160,4 @@ def save_positions_to_db_no_exception_handling(positions_table, table_name):
     ) VALUES %s
     """
 
-    execute_values(cur, insert_sql, positions_table, page_size=1000)  # Batch internally
-    conn.commit()
-    cur.close()
-    conn.close()
-
-
-def save_positions_to_db(positions_table, table_name):
-    """
-    Insert 10k+ items from memory list.
-    Assumes list format: (extracao_ts, veiculo_id, linha_lt, linha_code,
-                          linha_sentido, lt_destino, lt_origem, veiculo_prefixo,
-                          veiculo_acessivel, veiculo_ts, veiculo_lat, veiculo_long)
-    """
-
-    conn = None
-    try:
-        # 1. Initialize connection and cursor
-        conn = get_db_connection()
-        cur = conn.cursor()
-
-        insert_sql = f"""
-        INSERT INTO {table_name} (
-            extracao_ts, veiculo_id, linha_lt, linha_code, linha_sentido,
-            lt_destino, lt_origem, veiculo_prefixo, veiculo_acessivel, veiculo_ts,
-            veiculo_lat, veiculo_long
-        ) VALUES %s
-        """
-
-        # 2. Execute the batch insert
-        execute_values(cur, insert_sql, positions_table, page_size=1000)
-
-        # 3. Commit only if execution succeeds
-        conn.commit()
-        print(f"Successfully inserted {len(positions_table)} rows into {table_name}")
-
-    except (DatabaseError, InterfaceError) as db_err:
-        # Rollback the transaction if any database error occurs
-        if conn:
-            conn.rollback()
-        logging.error(f"Database error during insert into {table_name}: {db_err}")
-        raise  # Re-raise so the orchestrator knows the pipeline failed
-
-    except Exception as e:
-        # Catch unexpected Python errors
-        if conn:
-            conn.rollback()
-        logging.error(f"Unexpected error during transformation: {e}")
-        raise
-
-    finally:
-        # 4. ALWAYS close the connection, regardless of success or failure
-        if conn:
-            cur.close()
-            conn.close()
-            print("Database connection closed.")
+    bulk_insert_data_table(insert_sql, positions_table)
