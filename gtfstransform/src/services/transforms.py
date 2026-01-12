@@ -34,15 +34,28 @@ def transform_trips(config):
 
 
 def transform_stop_times(config):
-    print("Transforming stop times...")
-    # Add your logic to transform stop times here
-    print("Stop times transformed successfully.")
+    SOURCE_BUCKET = config["SOURCE_BUCKET"]
+    APP_FOLDER = config["APP_FOLDER"]
+    schema = "trusted"
+    table_name = "stop_times"
+    print(f"Transforming {table_name}...")
+    csv_bytes = load_raw_csv(SOURCE_BUCKET, APP_FOLDER, table_name)
+    buffer, columns = get_pandas_buffer_from_csv_buffer(csv_bytes)
+    save_routes_to_db(config, schema, table_name, columns, buffer)
+    print("Transformation successful.")
 
 
 def transform_stops(config):
-    print("Transforming stops...")
-    # Add your logic to transform stops here
-    print("Stops transformed successfully.")
+    SOURCE_BUCKET = config["SOURCE_BUCKET"]
+    APP_FOLDER = config["APP_FOLDER"]
+    schema = "trusted"
+    table_name = "stops"
+    print(f"Transforming {table_name}...")
+    csv_bytes = load_raw_csv(SOURCE_BUCKET, APP_FOLDER, table_name)
+    buffer, columns = get_pandas_buffer_from_csv_buffer(csv_bytes)
+    save_routes_to_db(config, schema, table_name, columns, buffer)
+    print("Transformation successful.")
+
 
 
 def transform_calendar(config):

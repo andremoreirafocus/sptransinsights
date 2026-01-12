@@ -26,7 +26,21 @@ CREATE TABLE trusted.trips (
     shape_id TEXT
 );
 
+CREATE TABLE trusted.stop_times (
+    trip_id TEXT,
+    arrival_time TEXT,
+    departure_time TEXT,
+    stop_id INTEGER,
+    stop_sequence INTEGER
+);
 
+CREATE TABLE trusted.stops (
+    stop_id INTEGER,
+    stop_name TEXT,
+    stop_desc TEXT,
+    stop_lat  DOUBLE PRECISION,
+    stop_lon  DOUBLE PRECISION
+);
 
 Para instalar os requisitos:
 pip install -r requirements.txt
