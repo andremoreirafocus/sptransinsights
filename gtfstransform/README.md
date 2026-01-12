@@ -17,6 +17,15 @@ CREATE TABLE trusted.routes (
     route_text_color TEXT
 );
 
+CREATE TABLE trusted.trips (
+    route_id TEXT,
+    service_id TEXT,
+    trip_id TEXT,
+    trip_headsign TEXT,	
+    direction_id TEXT,
+    shape_id TEXT
+);
+
 
 
 Para instalar os requisitos:

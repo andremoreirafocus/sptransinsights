@@ -12,20 +12,25 @@ logger = logging.getLogger(__name__)
 def transform_routes(config):
     SOURCE_BUCKET = config["SOURCE_BUCKET"]
     APP_FOLDER = config["APP_FOLDER"]
-    print("Transforming routes...")
-    table_name = "routes"
     schema = "trusted"
+    table_name = "routes"
+    print(f"Transforming {table_name}...")
     csv_bytes = load_raw_csv(SOURCE_BUCKET, APP_FOLDER, table_name)
     buffer, columns = get_pandas_buffer_from_csv_buffer(csv_bytes)
     save_routes_to_db(config, schema, table_name, columns, buffer)
-
-    print("Routes transformed successfully.")
+    print("Transformation successful.")
 
 
 def transform_trips(config):
-    print("Transforming trips...")
-    # Add your logic to transform trips here
-    print("Trips transformed successfully.")
+    SOURCE_BUCKET = config["SOURCE_BUCKET"]
+    APP_FOLDER = config["APP_FOLDER"]
+    schema = "trusted"
+    table_name = "trips"
+    print(f"Transforming {table_name}...")
+    csv_bytes = load_raw_csv(SOURCE_BUCKET, APP_FOLDER, table_name)
+    buffer, columns = get_pandas_buffer_from_csv_buffer(csv_bytes)
+    save_routes_to_db(config, schema, table_name, columns, buffer)
+    print("Transformation successful.")
 
 
 def transform_stop_times(config):
