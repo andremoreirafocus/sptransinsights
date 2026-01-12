@@ -35,41 +35,61 @@ def main():
     KAFKA_TOPIC = config.get("KAFKA_TOPIC")
     KAFKA_BROKER = config.get("KAFKA_BROKER")
     DOWNLOADS_FOLDER = config.get("DOWNLOADS_FOLDER")
+    API_MAX_RETRIES = int(config.get("API_MAX_RETRIES"))
+    INTERVAL = int(config.get("EXTRACTION_INTERVAL_SECONDS"))
+
     while True:
-        buses_positions_payload = extract_buses_positions(
-            token=TOKEN,
-            base_url=API_BASE_URL,
-        )
-        if not buses_positions_response_is_valid(buses_positions_payload):
-            logger.error("Invalid buses positions response structure. Skipping...")
-            continue
-        reference_time, total_vehicles = get_buses_positions_summary(
-            buses_positions_payload
-        )
-        buses_positions = {
-            "metadata": {
-                "extracted_at": datetime.now().isoformat(),
-                "source": "sptrans_api_v2",
-                "total_vehicles": total_vehicles,
-            },
-            "payload": buses_positions_payload,
-        }
-        logger.info(
-            f"[{datetime.now().strftime('%H:%M:%S')}] Ref SPTrans: {reference_time} | Veículos Ativos: {total_vehicles}"
-        )
-        save_data_to_json_file(
-            buses_positions,
-            downloads_folder=DOWNLOADS_FOLDER,
-            file_name=f"buses_positions_{reference_time}.json",
-        )
-        sendKafka(
-            broker=KAFKA_BROKER,
-            topic=KAFKA_TOPIC,
-            message=json.dumps(buses_positions),
-        )
-        interval = int(config.get("EXTRACTION_INTERVAL_SECONDS"))
-        logger.info(f"[*] Waiting for {interval} seconds until next extraction...\n")
-        time.sleep(interval)
+        retries = 0
+        back_off = 1
+        buses_positions_payload = None
+        download_successful = False
+        while not download_successful:
+            buses_positions_payload = extract_buses_positions(
+                token=TOKEN,
+                base_url=API_BASE_URL,
+            )
+            if buses_positions_response_is_valid(buses_positions_payload):
+                download_successful = True
+                break
+            retries += 1
+            logger.warning(
+                "Invalid buses positions response structure! Retrying in {back_off} seconds..."
+            )
+            time.sleep(back_off)
+            back_off *= 2
+            if retries >= API_MAX_RETRIES:
+                download_successful = False
+                logger.error(
+                    "Max retries reached. Download failed. Skipping this extraction cycle."
+                )
+                break
+        if download_successful:
+            reference_time, total_vehicles = get_buses_positions_summary(
+                buses_positions_payload
+            )
+            buses_positions = {
+                "metadata": {
+                    "extracted_at": datetime.now().isoformat(),
+                    "source": "sptrans_api_v2",
+                    "total_vehicles": total_vehicles,
+                },
+                "payload": buses_positions_payload,
+            }
+            logger.info(
+                f"[{datetime.now().strftime('%H:%M:%S')}] Ref SPTrans: {reference_time} | Veículos Ativos: {total_vehicles}"
+            )
+            save_data_to_json_file(
+                buses_positions,
+                downloads_folder=DOWNLOADS_FOLDER,
+                file_name=f"buses_positions_{reference_time}.json",
+            )
+            sendKafka(
+                broker=KAFKA_BROKER,
+                topic=KAFKA_TOPIC,
+                message=json.dumps(buses_positions),
+            )
+        logger.info(f"[*] Waiting for {INTERVAL} seconds until next extraction...\n")
+        time.sleep(INTERVAL)
 
 
 if __name__ == "__main__":
