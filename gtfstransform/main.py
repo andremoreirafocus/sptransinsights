@@ -1,5 +1,4 @@
-from dotenv import dotenv_values
-from gtfstransform.src.services.transforms import (
+from src.services.transforms import (
     transform_calendar,
     transform_frequencies,
     transform_routes,
@@ -7,6 +6,7 @@ from gtfstransform.src.services.transforms import (
     transform_stops,
     transform_trips,
 )
+from dotenv import dotenv_values
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -27,16 +27,14 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    print("Starting GTFS Transformations...")
     config = dotenv_values(".env")
-    source_bucket = config["SOURCE_BUCKET"]
-    dest_bucket = config["DEST_BUCKET"]
-    app_folder = config["APP_FOLDER"]
-    transform_routes(source_bucket, dest_bucket, app_folder)
-    transform_trips(source_bucket, dest_bucket, app_folder)
-    transform_stop_times(source_bucket, dest_bucket, app_folder)
-    transform_stops(source_bucket, dest_bucket, app_folder)
-    transform_calendar(source_bucket, dest_bucket, app_folder)
-    transform_frequencies(source_bucket, dest_bucket, app_folder)
+    transform_routes(config)
+    transform_trips(config)
+    transform_stop_times(config)
+    transform_stops(config)
+    transform_calendar(config)
+    transform_frequencies(config)
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
