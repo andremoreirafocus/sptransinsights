@@ -31,7 +31,7 @@ CREATE TABLE trusted.stop_times (
     arrival_time TEXT,
     departure_time TEXT,
     stop_id INTEGER,
-    stop_sequence INTEGER
+    stop_sequence INTEGER,
 );
 
 CREATE TABLE trusted.stops (
@@ -41,6 +41,21 @@ CREATE TABLE trusted.stops (
     stop_lat  DOUBLE PRECISION,
     stop_lon  DOUBLE PRECISION
 );
+
+CREATE TABLE trusted.calendar (
+    service_id     TEXT,
+    monday         INTEGER,
+    tuesday        INTEGER,
+    wednesday      INTEGER,
+    thursday       INTEGER,
+    friday         INTEGER,
+    saturday       INTEGER,
+    sunday         INTEGER,
+    start_date     INTEGER,
+    end_date       INTEGER
+);
+
+
 
 Para instalar os requisitos:
 pip install -r requirements.txt
