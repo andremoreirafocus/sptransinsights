@@ -1,11 +1,16 @@
-Este projeto faz:
-- lê cada um dos arquivos em um prefixo de uma pasta raw no minio
+Este projeto:
+- lê cada um dos arquivos extraidos gtfs do portal do desenvolvedor e que se encontarm em uma subpasta gtfs no bucker "raw" e salva no db em um schema trusted, para cada arquivo relevante, uma tabela com o mesmo nome que o arquivo ainda sem nenhuma transformação.
 
 Configurações:
-RAW_BUCKET_NAME = "raw"
+SOURCE_BUCKET = "raw"
 APP_FOLDER = "gtfs"
-TRUSTED_BUCKET_NAME = "trusted"
-
+BASE_TABLE_NAME="trusted"
+DB_HOST=<hostname>
+DB_PORT=<port>
+DB_DATABASE="sptrans_insights"
+DB_USER=<user>
+DB_PASSWORD=<password>
+DB_SSLMODE="prefer"
 
 CREATE TABLE trusted.routes (
     route_id TEXT,
