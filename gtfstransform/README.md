@@ -12,6 +12,18 @@ DB_USER=<user>
 DB_PASSWORD=<password>
 DB_SSLMODE="prefer"
 
+Para instalar os requisitos:
+- cd <diretorio deste subprojeto>
+- python3 -m venv .env
+- source .venv/bin/activate
+- pip install -r requirements.txt
+
+Para executar: 
+python ./main.py
+
+Instruções adicionais:
+Database commands:
+
 CREATE TABLE trusted.routes (
     route_id TEXT,
     agency_id INTEGER,	
@@ -85,8 +97,3 @@ SELECT * FROM trusted.stop_times;
 SELECT * FROM trusted.frequencies;
 SELECT * FROM trusted.calendar;
 
-Para instalar os requisitos:
-pip install -r requirements.txt
-
-Para executar: 
-python ./main.py

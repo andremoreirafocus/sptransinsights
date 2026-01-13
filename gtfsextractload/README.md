@@ -11,7 +11,13 @@ RAW_BUCKET_NAME = "raw"
 APP_FOLDER = "gtfs"
 
 Para instalar os requisitos:
-pip install -r requirements.txt
+- cd <diretorio deste subprojeto>
+- python3 -m venv .env
+- source .venv/bin/activate
+- pip install -r requirements.txt
 
 Para executar: 
 python ./main.py
+
+Instruções adicionais:
+- Para obter as credenciais cadastre-se no portal do desenvolvedor da SPTRANS

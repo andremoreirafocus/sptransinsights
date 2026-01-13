@@ -11,8 +11,15 @@ RAW_BUCKET_NAME = <bucket_name>
 APP_FOLDER = <folder>
 
 Para instalar os requisitos:
-pip install -r requirements.txt
+- cd <diretorio deste subprojeto>
+- python3 -m venv .env
+- source .venv/bin/activate
+- pip install -r requirements.txt
 
+Para executar: 
+python ./main.py
+
+Instruções adicionais:
 Kafka:
     Foi necessário mudar a porta do akhq para 28080 no docker-compose-yaml para parar de conflitar com outros componentes
     docker compose up -d kafka-broker zookeeper akhq
@@ -22,8 +29,6 @@ Kafka:
     kafka-topics --bootstrap-server localhost:9092 --create --partitions 1 --replication-factor 1 --topic sptrans-positions;
 
 
-Para executar: 
-python ./main.py
 
 
 

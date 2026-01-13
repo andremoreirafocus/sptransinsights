@@ -19,6 +19,16 @@ DB_USER=<user>
 DB_PASSWORD=<password>
 DB_SSLMODE="prefer"
 
+Para instalar os requisitos:
+- cd <diretorio deste subprojeto>
+- python3 -m venv .env
+- source .venv/bin/activate
+- pip install -r requirements.txt
+
+Para executar: 
+python ./main.py
+
+Instruções adicionais:
 Database commands:
 create database sptrans_insights;
 \l
@@ -40,12 +50,4 @@ CREATE TABLE trusted.posicoes (
     veiculo_lat DOUBLE PRECISION,  -- py: Latitude
     veiculo_long DOUBLE PRECISION  -- px: Longitude
 );
-
-
-Para instalar os requisitos:
-pip install -r requirements.txt
-
-Para executar: 
-python ./main.py
-
 

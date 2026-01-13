@@ -8,7 +8,11 @@ KAFKA_BROKER = "localhost:9092"
 KAFKA_TOPIC = "bus_positions"
 
 Para instalar os requisitos:
-pip install -r requirements.txt
+- cd <diretorio deste subprojeto>
+- python3 -m venv .env
+- source .venv/bin/activate
+- pip install -r requirements.txt
+
 
 Kafka:
     Foi necessário mudar a porta do akhq para 28080 no docker-compose-yaml para parar de conflitar com outros componentes
