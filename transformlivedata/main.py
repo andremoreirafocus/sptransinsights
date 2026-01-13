@@ -4,7 +4,7 @@ from src.services.transforms import (
 )
 import logging
 from logging.handlers import RotatingFileHandler
-
+from src.config import get_config
 
 LOG_FILENAME = "transformlivedata.log"
 
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 def main():
     logger.info("Starting transformation process...")
     print("Starting transformation process...")
-    config = dotenv_values(".env")
+    config = get_config()
     year = "2026"
     month = "01"
     day = "12"
