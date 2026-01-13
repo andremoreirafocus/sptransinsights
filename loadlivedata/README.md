@@ -2,9 +2,13 @@ Este projeto consome dados de um tópico Kafka e salva em um bucket no Minio
 
 Configurações necessárias no arquivo .env do projeto:
 INTERVALO = 120  # 2 minutos em segundos
-KAFKA_BROKER = "localhost:9092"
-KAFKA_TOPIC = "bus_positions"
-FOLDER = "raw"
+KAFKA_BROKER = <kafka_broker>
+KAFKA_TOPIC = <kafka_topic>
+MINIO_ENDPOINT= <hostname:porta>
+ACCESS_KEY= <key>
+SECRET_KEY= <secret>
+RAW_BUCKET_NAME = <bucket_name>
+APP_FOLDER = <folder>
 
 Para instalar os requisitos:
 pip install -r requirements.txt
