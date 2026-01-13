@@ -8,14 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 def transform_position(config, year, month, day, hour, minute):
-    source_bucket = config["SOURCE_BUCKET"]
-    app_folder = config["APP_FOLDER"]
-    table_name = config["TABLE_NAME"]
-
     logger.info("Transforming position...")
-    raw_positions = load_positions(
-        config, source_bucket, app_folder, year, month, day, hour, minute
-    )
+    raw_positions = load_positions(config, year, month, day, hour, minute)
     if not raw_positions:
         logger.error("No position data found to transform.")
         return
@@ -24,7 +18,7 @@ def transform_position(config, year, month, day, hour, minute):
         logger.error("No valid position records found after transformation.")
         return
     try:
-        save_positions_to_db(config, positions_table, table_name)
+        save_positions_to_db(config, positions_table)
     except Exception as e:
         logger.error(f"Error saving positions to DB: {e}")
         return
