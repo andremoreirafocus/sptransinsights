@@ -7,6 +7,7 @@ Requisitos para o funcionamento do projeto:
  docker compose up -d minio
  docker compose up -d postgres
  docker compose up -d postgres_airflow webserver scheduler
+docker compose up -d metabase
 
  AKHQ (Kafka): 
  http://localhost:28080/ui/
@@ -17,5 +18,7 @@ Requisitos para o funcionamento do projeto:
  Airflow:
  http://localhost:8080/
 
-
+ Metabase:
+ http://localhost:3000/
+ 
  
