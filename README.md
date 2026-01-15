@@ -26,15 +26,18 @@ docker compose up -d metabase
 TO DO:
 
 Em gtfstransform:
-    criar a tabela trusted.terminais com os campos e computar para consulta pelo livedatatransform:
+    criar a tabela trusted.terminals com os campos e computar para consulta pelo livedatatransform:
         trip_id
-        trip_distance
+        is_circular
+        trip_distance_tp_ts
+        trip_distance_ts_tp (null quando is_circular)
         tp_stop_id
         tp_lat
         tp_lon
-        ts_stop_id
-        ts_lat
-        ts_lon
+        ts_name
+        ts_stop_id (null quando is_circular)
+        ts_lat (null quando is_circular)
+        ts_lon (null quando is_circular)
 
 
 Em livedatatransform:
@@ -45,16 +48,19 @@ Em livedatatransform:
 
 
 Em um novo processo refinelivedata:
-Criar as tabelas refined.viagens-concluidas e viagens-em-andamento
+Criar as tabelas refined.finished_trips e ongoing_trips
     trip_id
     vehicle_id
     trip_start_time
     trip_end_time
     duration
     average_speed
+    is_circular
 
-Quando a distancia ao tp for superior ao limite de tolerancia (exemplo 30 metros) a viagem começa
-Quando a distancia ao ts for inferior ao limite de tolerancia (exemplo 30 metros) a viagem termina
+Quando a distancia ao tp (origem) for superior ao limite de tolerancia (exemplo 30 metros) a viagem começa
+Quando a distancia ao ts (destino) for inferior ao limite de tolerancia (exemplo 30 metros) a viagem termina
+
+Se a viagens for circular a dist
 
 Adicionar docker-compose.yaml e config de serviços
 Dockerizar algum processo que esteja sendo em Python sem airflow
