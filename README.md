@@ -26,25 +26,27 @@ docker compose up -d metabase
 TO DO:
 
 Em gtfstransform:
-    criar a tabela trusted.terminals com os campos e computar para consulta pelo livedatatransform:
-        trip_id
-        is_circular
-        trip_distance_tp_ts
-        trip_distance_ts_tp (null quando is_circular)
-        tp_stop_id
-        tp_lat
-        tp_lon
-        ts_name
-        ts_stop_id (null quando is_circular)
-        ts_lat (null quando is_circular)
-        ts_lon (null quando is_circular)
+    criar a tabela trusted.trips_extended com os campos e computar para consulta pelo livedatatransform:
+        trip_id (from trips)
+        is_circular (from trips)
+        tp_stop_id (from stop_times)
+        tp_stop_name (from stops)
+        tp_lat (from stops)
+        tp_lon (from stops)
+        ts_stop_id (from stop_times) (null quando is_circular)
+        tp_stop_name (from stops)
+        ts_lat (from stops) (null quando is_circular)
+        ts_lon (from stops) (null quando is_circular)
+        <!-- trip_distance_tp_ts (from  )
+        trip_distance_ts_tp (null quando is_circular) -->
+        trip_linear_distance (calculated from tp_lat, tp_lon, ts_lat, ts_lon in this table)
 
 
 Em livedatatransform:
     Na trusted.positions incluir os campos e computar os campos
         trip_id 
-        tp_distance
-        ts_distance
+        tp_current_distance
+        ts_current_distance
 
 
 Em um novo processo refinelivedata:
