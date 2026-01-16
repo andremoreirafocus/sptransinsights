@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def load_and_transform_positions(config, year, month, day, hour, minute):
+def load_transform_and_save_positions(config, year, month, day, hour, minute):
     logger.info("Transforming position...")
     raw_positions = load_positions(config, year, month, day, hour, minute)
     if not raw_positions:

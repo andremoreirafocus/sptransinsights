@@ -1,5 +1,5 @@
-from src.services.load_and_transform_positions import (
-    load_and_transform_positions,
+from src.load_transform_and_save_positions import (
+    load_transform_and_save_positions,
 )
 import logging
 from logging.handlers import RotatingFileHandler
@@ -36,7 +36,7 @@ def main():
     # hour = "08"
     # minute = "42"
 
-    load_and_transform_positions(config, year, month, day, hour, minute)
+    load_transform_and_save_positions(config, year, month, day, hour, minute)
 
 
 if __name__ == "__main__":

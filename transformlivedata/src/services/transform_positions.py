@@ -41,9 +41,9 @@ def get_trip_details(df, linha, sentido):
     if df_details.shape[0] > 0:
         return df_details.to_dict(orient="records")[0]
     else:
-        print(f"Trip details not found for trip_id: {this_trip_id}")
+        # print(f"Trip details not found for trip_id: {this_trip_id}")
         logger.error(f"Trip details not found for trip_id: {this_trip_id}")
-        print(df_details.head(5))
+        # print(df_details.head(5))
         # exit()
         return {
             "is_circular": False,
@@ -82,9 +82,9 @@ def calculate_distance(lat1, lon1, lat2, lon2):
         return distance
     except Exception as e:
         logger.error(f"Error calculating distance: {e}")
-        print(f"Error calculating distance: {e}")
-        print(f"lat1, lon1, lat2, lon2 = {lat1}, {lon1}, {lat2}, {lon2}")
-        print(type(lat1), type(lon1), type(lat2), type(lon2))
+        # print(f"Error calculating distance: {e}")
+        logger.error(f"lat1, lon1, lat2, lon2 = {lat1}, {lon1}, {lat2}, {lon2}")
+        # print(type(lat1), type(lon1), type(lat2), type(lon2))
         return -1
 
 
@@ -146,15 +146,13 @@ def transform_positions(config, raw_positions):
             logger.error(
                 f"Invalid distance calculation for vehicle {vehicle.get('p')} on line {linha}"
             )
-            print(
-                f"Invalid distance calculation for vehicle {vehicle.get('p')} on line {linha}"
-            )
-            print(f"\nvehicle_record: {vehicle_record}\n")
+            # print(
+            #     f"Invalid distance calculation for vehicle {vehicle.get('p')} on line {linha}"
+            # )
+            # print(f"\nvehicle_record: {vehicle_record}\n")
             # print(vehicle)
-            print(trip_details)
-            exit()
+            logger.info(f"Trip details: {trip_details}")
 
-        # exit()
         return vehicle_record, invalid_trip
 
     logger.info("Converting raw positions to positions table...")
@@ -173,7 +171,7 @@ def transform_positions(config, raw_positions):
         return None
     logger.info("Preloading trip details from database...")
     df_trip_details = load_trip_details_to_dataframe(config)
-    print(df_trip_details)
+    # print(df_trip_details)
     logger.info("Starting transformation of position data...")
     total_number_of_vehicles = 0
     for line in payload["l"]:
