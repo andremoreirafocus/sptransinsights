@@ -3,6 +3,7 @@ from src.services.load_positions_for_line_and_vehicle import (
 )
 from src.services.extract_trips_from_positions import (
     extract_raw_trips_metadata,
+    filter_healthy_trips,
     generate_trips_table,
 )
 from src.services.save_trips_to_db import save_trips_to_db
@@ -26,7 +27,7 @@ def extract_trips_per_line_per_vehicle(config, year, month, day, linha_lt, veicu
         f"Extracted {len(raw_trips_metadata)} raw trips metadata from position records for line {linha_lt} and vehicle {veiculo_id}."
     )
     # return raw_trips_metadata
-    clean_trips_metadata = raw_trips_metadata
+    clean_trips_metadata = filter_healthy_trips(raw_trips_metadata, position_records)
     logger.info("Generating records for trips...")
     clean_trips = generate_trips_table(
         position_records, clean_trips_metadata, linha_lt, veiculo_id
