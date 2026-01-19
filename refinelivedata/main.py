@@ -1,5 +1,5 @@
-from src.extract_trips_per_line_per_vehicle import (
-    extract_trips_per_line_per_vehicle,
+from src.extract_trips_for_all_Lines_and_vehicles import (
+    extract_trips_for_all_Lines_and_vehicles,
 )
 import logging
 from logging.handlers import RotatingFileHandler
@@ -25,13 +25,7 @@ def main():
     logger.info("Starting Refinement process...")
     print("Starting Refinement process...")
     config = get_config()
-    year = "2026"
-    month = "01"
-    day = "15"
-    linha_lt = "2290-10"
-    veiculo_id = "41539"
-
-    extract_trips_per_line_per_vehicle(config, year, month, day, linha_lt, veiculo_id)
+    extract_trips_for_all_Lines_and_vehicles(config)
 
 
 if __name__ == "__main__":
