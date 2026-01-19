@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 def extract_raw_trips_metadata(records):
     trips_metadata = []
     if records:
+        if len(records) < 2:
+            return trips_metadata
         current_trip_start_index = 0
         current_trip_end_index = 0
         previous_trip_end_index = -1
