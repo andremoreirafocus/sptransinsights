@@ -18,9 +18,6 @@ docker compose up -d metabase
  Airflow:
  http://localhost:8080/
 
- Metabase:
- http://localhost:3000/
-
 
 # #############################################################
 TO DO:
