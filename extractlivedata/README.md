@@ -13,6 +13,10 @@ Para instalar os requisitos:
 - source .venv/bin/activate
 - pip install -r requirements.txt
 
+Para buildar o container
+cd ./extractlivedata
+docker build -t sptrans-extractlivedata -f Dockerfile .
+docker run --name extractlivedata sptrans-extractlivedat
 
 Kafka:
     Foi necessário mudar a porta do akhq para 28080 no docker-compose-yaml para parar de conflitar com outros componentes

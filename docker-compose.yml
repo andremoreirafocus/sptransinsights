@@ -191,3 +191,16 @@ services:
      - POSTGRES_PASSWORD=postgres
     networks:
       rede_fia:
+
+extractlivedata:
+    build:
+      context: .
+      dockerfile: extractlivedata/Dockerfile
+    container_name: extractlivedata
+    depends_on:
+      - kafka-broker
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-broker:29092
+    networks:
+      - rede_fia
+    restart: on-failure
