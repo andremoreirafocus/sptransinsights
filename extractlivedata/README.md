@@ -16,6 +16,13 @@ Para instalar os requisitos:
 Para buildar o container
 cd ./extractlivedata
 docker build -t sptrans-extractlivedata -f Dockerfile .
+
+in docker compose:
+docker compose up -d extractlivedata
+
+in standalone mode:
+docker run --name extractlivedata --network engenharia-dados_rede_fia sptrans-extractlivedata
+
 docker run --name extractlivedata sptrans-extractlivedat
 
 Kafka:

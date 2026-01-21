@@ -19,6 +19,18 @@ Para instalar os requisitos:
 Para executar: 
 python ./main.py
 
+Para buildar o container
+cd ./loadlivedata
+docker build -t sptrans-loadlivedata -f Dockerfile .
+
+in docker compose:
+docker compose up -d loadlivedata
+
+in standalone mode:
+docker run --name loadlivedata --network engenharia-dados_rede_fia sptrans-loadlivedata
+
+docker run --name loadlivedata sptrans-extractlivedat
+
 Instruções adicionais:
 Kafka:
     Foi necessário mudar a porta do akhq para 28080 no docker-compose-yaml para parar de conflitar com outros componentes
