@@ -6,36 +6,50 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def extract_trips_for_a_test_Line_and_vehicle(config):
+def generate_trips_for_all_Lines_and_vehicles(config, all_lines_and_vehicles):
     year = "2026"
     month = "01"
     day = "15"
-    linha_lt = "2290-10"
-    veiculo_id = "41539"
-    extract_trips_per_line_per_vehicle(config, year, month, day, linha_lt, veiculo_id)
+
+    total_records = len(all_lines_and_vehicles)
+    num_processed = 0
+    for record in all_lines_and_vehicles:
+        logger.info(f"{record}")
+        linha_lt = record["linha_lt"]
+        veiculo_id = record["veiculo_id"]
+        logger.info(f"Line: {linha_lt}, vehicle: {veiculo_id}")
+        extract_trips_per_line_per_vehicle(
+            config, year, month, day, linha_lt, veiculo_id
+        )
+        num_processed += 1
+        logger.info(f"Record {num_processed}/{total_records} processed.")
+    return total_records
 
 
 def extract_trips_for_all_Lines_and_vehicles(config):
-    # date params below kept for compatibility during development
-    year = "2026"
-    month = "01"
-    day = "15"
+    # # date params below kept for compatibility during development
+    # year = "2026"
+    # month = "01"
+    # day = "15"
     logger.info("Loading all lines and vehicles...")
     # all_lines_and_vehicles = load_all_lines_and_vehicles(config)
     all_lines_and_vehicles = load_all_lines_and_vehicles_last_3_hours(config)
     total_records = len(all_lines_and_vehicles)
     logger.info(f"Loaded {total_records} records for lines and vehicles")
-    num_processed = 0
-    for record in all_lines_and_vehicles:
-        print(f"{record}")
-        linha_lt = record["linha_lt"]
-        veiculo_id = record["veiculo_id"]
-        print(f"Line: {linha_lt}, vehicle: {veiculo_id}")
-        extract_trips_per_line_per_vehicle(
-            config, year, month, day, linha_lt, veiculo_id
-        )
-        num_processed += 1
-        print(f"Record {num_processed}/{total_records} processed.")
+
+    generate_trips_for_all_Lines_and_vehicles(config, all_lines_and_vehicles)
+
+    # num_processed = 0
+    # for record in all_lines_and_vehicles:
+    #     logger.info(f"{record}")
+    #     linha_lt = record["linha_lt"]
+    #     veiculo_id = record["veiculo_id"]
+    #     logger.info(f"Line: {linha_lt}, vehicle: {veiculo_id}")
+    #     extract_trips_per_line_per_vehicle(
+    #         config, year, month, day, linha_lt, veiculo_id
+    #     )
+    #     num_processed += 1
+    #     logger.info(f"Record {num_processed}/{total_records} processed.")
 
 
 def load_all_lines_and_vehicles_last_3_hours(config):
@@ -77,3 +91,12 @@ def load_all_lines_and_vehicles(config):
     position_records = df_raw.to_dict("records")
 
     return position_records
+
+
+def extract_trips_for_a_test_Line_and_vehicle(config):
+    year = "2026"
+    month = "01"
+    day = "15"
+    linha_lt = "2290-10"
+    veiculo_id = "41539"
+    extract_trips_per_line_per_vehicle(config, year, month, day, linha_lt, veiculo_id)
