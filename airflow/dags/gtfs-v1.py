@@ -4,7 +4,7 @@ from airflow.utils.dates import days_ago
 from gtfs.extractload.services.extract_gtfs_files import extract_gtfs_files
 from gtfs.extractload.services.load_files_to_raw import load_files_to_raw
 
-from gtfs.extractload.config import get_config
+from gtfs.extractload.config import get_config as get_config_extractload
 
 from gtfs.transform.services.create_save_trip_details import (
     create_trip_details_table,
@@ -38,14 +38,14 @@ default_args = {
 
 # Função que combina todas as etapas do pipeline de ingestão de dados
 def extract_load_files():
-    config = get_config_transform()
+    config = get_config_extractload()
     files_list = extract_gtfs_files(config)
     load_files_to_raw(config, files_list)
 
 
 def transform():
     logging.info("Starting GTFS Transformations...")
-    config = get_config()
+    config = get_config_transform()
     transform_routes(config)
     transform_trips(config)
     transform_stops(config)
