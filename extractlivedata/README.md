@@ -13,17 +13,22 @@ Para instalar os requisitos:
 - source .venv/bin/activate
 - pip install -r requirements.txt
 
-Para buildar o container
-cd ./extractlivedata
-docker build -t sptrans-extractlivedata -f Dockerfile .
+Para executar local: 
+    python ./main.py
 
-in docker compose:
-docker compose up -d extractlivedata
+No docker compose:
+    Para buildar o container
+        docker compose build --no-cache extractlivedata
+    Para iniciar o container 
+        docker compose up -d extractlivedata
 
-in standalone mode:
-docker run --name extractlivedata --network engenharia-dados_rede_fia sptrans-extractlivedata
-
-docker run --name extractlivedata sptrans-extractlivedat
+Para buildar e rodar o container em standalone:
+    copie o arquivo .env para .env-docker e ajuste hostname e porta adequadamente
+    cd ./extractlivedata
+    docker build -t sptrans-extractlivedata -f Dockerfile .
+    docker run --name extractlivedata sptrans-extractlivedat
+    Para comunicação com os outros containers
+    docker run --name extractlivedata --network engenharia-dados_rede_fia sptrans-extractlivedata
 
 Kafka:
     Foi necessário mudar a porta do akhq para 28080 no docker-compose-yaml para parar de conflitar com outros componentes
@@ -33,8 +38,5 @@ Kafka:
     docker exec -it kafka-broker /bin/bash
     kafka-topics --bootstrap-server localhost:9092 --create --partitions 1 --replication-factor 1 --topic sptrans-positions;
 
-
-Para executar: 
-python ./main.py
 
 

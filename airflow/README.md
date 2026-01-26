@@ -1,11 +1,35 @@
-Neste projeto estão contemplados:
-- transformlivedata
-    - livedata
-    - backfill
+Neste projeto estão contemplados os seguintes fluxos de acordo com o nome das pastas das DAGs e respectivos scripts:
+- gtfs: importa arquivos do GTFS, transforma arquivos para tabelas correspondentes no Postgres no schema trusted e cria a tabela trip_details no schema trusted
+- transformdatatotrusted: transforma conjunto de posicoes de onibus correspondente ao endpoint GET /posicoes, gerando, para cada veiculo, um registro na tabela trusted.positions com sua posicao e metadados enriquecidos com o conteúdo da tabela trusted.trip_details
+- refinedfinishedtrips: identifica viagens dos veiculos nas ultimas horas baseado na sequencia temporal de posicoes de cada veiculo armazenada em trusted.positions
+- updatelatestpositions: captura a última posição de cada veículo a partir do timestamp de extração do dado e salva na tabela refined.latest_positions
 
-Requisitos para o funcionamento do Airflow:
- docker compose up -d postgres_airflow webserver scheduler
 
- Airflow:
+## Inicializndo o Ambiente
+
+Para inicializar o serviço, utilize o comando:
+
+```shell
+docker-compose up -d postgres_airflow webserver scheduler
+```
+
+## Criar o Usuário para Fazer Login no Airflow
+
+Após inicializar o serviço, crie um usuário admin para acessar a interface do Airflow:
+
+- Executar o comando abaixo no terminal
+
+```shell
+docker compose exec webserver airflow users create \
+    --username admin \
+    --firstname Firstname \
+    --lastname Lastname \
+    --role Admin \
+    --email admin@example.com \
+    --password admin
+```
+
+ ## Para acessar o Airflow:
  http://localhost:8080/
+
 

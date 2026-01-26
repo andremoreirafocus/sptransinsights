@@ -40,9 +40,6 @@ Kafka:
     docker exec -it kafka-broker /bin/bash
     kafka-topics --bootstrap-server localhost:9092 --create --partitions 1 --replication-factor 1 --topic sptrans-positions;
 
-
-
-
-
-
-
+Minio:
+    Criar o bucket raw
+    Criar o access key e informar access key e secret key no .env do projeto
