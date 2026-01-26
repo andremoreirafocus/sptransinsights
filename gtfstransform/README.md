@@ -21,11 +21,21 @@ Para instalar os requisitos:
 - source .venv/bin/activate
 - pip install -r requirements.txt
 
-Para executar: 
-python ./main.py
+## Para executar: 
+    Criar tabelas conforme instruções abaixo
+    python ./main.py
 
-Instruções adicionais:
+## Instruções adicionais:
+docker exec -it postgres bash
+psql -U postgres -W
+
 Database commands:
+create database sptrans_insights;
+\l
+\c sptrans_insights
+CREATE SCHEMA trusted;
+\dn
+
 
 CREATE TABLE trusted.routes (
     route_id TEXT,
@@ -45,7 +55,6 @@ CREATE TABLE trusted.trips (
     direction_id TEXT,
     shape_id TEXT
 );
-
 
 CREATE TABLE trusted.stops (
     stop_id INTEGER,
@@ -86,13 +95,7 @@ CREATE TABLE trusted.calendar (
     end_date       INTEGER
 );
 
-DROP TABLE trusted.routes;
-DROP TABLE trusted.trips;
-DROP TABLE trusted.stops;
-DROP TABLE trusted.stop_times;
-DROP TABLE trusted.frequencies;
-DROP TABLE trusted.calendar;
-
+## Helper commands
 SELECT * FROM trusted.routes;
 SELECT * FROM trusted.trips;
 SELECT * FROM trusted.stops;
@@ -100,23 +103,30 @@ SELECT * FROM trusted.stop_times;
 SELECT * FROM trusted.frequencies;
 SELECT * FROM trusted.calendar;
 
+DROP TABLE trusted.routes;
+DROP TABLE trusted.trips;
+DROP TABLE trusted.stops;
+DROP TABLE trusted.stop_times;
+DROP TABLE trusted.frequencies;
+DROP TABLE trusted.calendar;
+
 # o comando abaixo não é necessario porque a implementacao faz um CTAS
 CREATE TABLE trusted.trip_details (
-        trip_id (from trips)
-        first_stop_id (from stop_times)
-        first_stop_name (from stops)
-        first_stop_lat  (from stops)
-        first_stop_lon  (from stops)
-        last_stop_id (from stop_times) (null quando is_circular)
-        last_stop_name (from stops)
-        last_stop_lat (from stops) (null quando is_circular)
-        last_stop_lon (from stops) (null quando is_circular)
-        trip_linear_distance (calculated from tp_lat, tp_lon, ts_lat, ts_lon in this table)
-        is_circular (from trips)
+        trip_id --(from trips)
+        first_stop_id, --(from stop_times)
+        first_stop_name, --(from stops)
+        first_stop_lat,  --(from stops)
+        first_stop_lon,  --(from stops)
+        last_stop_id, --(from stop_times) (null quando is_circular)
+        last_stop_name, --(from stops)
+        last_stop_lat, --(from stops) (null quando is_circular)
+        last_stop_lon, --(from stops) (null quando is_circular)
+        trip_linear_distance, --(calculated from tp_lat, tp_lon, ts_lat, ts_lon in this table)
+        is_circular --(from trips)
 )
 
 
-PESQUISAS:
+## PESQUISAS para exploração de dados
 # LINHA CIRCULAR:
 SELECT * FROM trusted.routes
 where route_id = '1012-10';
