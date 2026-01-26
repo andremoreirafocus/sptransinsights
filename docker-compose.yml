@@ -194,8 +194,8 @@ services:
 
   extractlivedata:
     build:
-      context: .
-      dockerfile: extractlivedata/Dockerfile
+      context: extractlivedata
+      dockerfile: Dockerfile
     container_name: extractlivedata
     depends_on:
       - kafka-broker
@@ -207,8 +207,8 @@ services:
 
   loadlivedata:
     build:
-      context: .
-      dockerfile: loadlivedata/Dockerfile
+      context: loadlivedata
+      dockerfile: Dockerfile
     container_name: loadlivedata
     depends_on:
       - kafka-broker 
