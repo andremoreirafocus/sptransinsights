@@ -1,10 +1,24 @@
-Este projeto faz:
-- extrai as posicoes para uma linha e veiculo para um ano, mes e dia;
-- calcula as trips para uma linha e veiculo para um ano, mes e dia;
-- salva as trips calculadas
+### Este projeto é responsável por gerar os dados da camada refined através de duas funções:
 
-Configurações:
-# TABLE_NAME=<table_name_including_schema> # where data will be written
+* **`extract_trips_for_all_Lines_and_vehicles(config)`**: Mapeia cada veículo ativo a uma jornada específica (`trip_id`), cruzando dados em tempo real com o planejamento estático (GTFS).
+* **`update_latest_positions(config)`**: Mantém o estado mais recente de cada veículo na frota para monitoramento imediato.
+
+### 🗄️ Definições de Tabelas (Schema `refined`)
+
+#### A. Viagens Finalizadas (`refined.finished_trips`)
+Armazena o histórico consolidado de jornadas concluídas para análise de eficiência e performance usando como fonte a tabela de viagens finalizadas
+
+#### B. Últimas posições (`refined.latest_positions`)
+Alimenta via CTAS a tabela que é fonte dp mapa de frota utilizando latitude e longitude para exibir a posição exata de cada ônibus no momento da consulta.
+
+
+## Para instalar os requisitos:
+- cd <diretorio deste subprojeto>
+- python3 -m venv .env
+- source .venv/bin/activate
+- pip install -r requirements.txt
+
+## Configurações do .env:
 FINISHED_TRIPS_TABLE_NAME=<table_name_for_finished_trips_including_schema_in_refined>
 POSITIONS_TABLE_NAME=<table_name_for_positions_in_trusted>
 LATEST_POSITIONS_TABLE_NAME=<table_name_for_positions_in_refined>
@@ -15,17 +29,13 @@ DB_USER=<user>
 DB_PASSWORD=<password>
 DB_SSLMODE="prefer"
 
-Para instalar os requisitos:
-- cd <diretorio deste subprojeto>
-- python3 -m venv .env
-- source .venv/bin/activate
-- pip install -r requirements.txt
-
-Para executar: 
+## Para executar: 
 python ./main.py
 
+## Configurações de Banco de dados que devem ser feitas antes da execução:
 CREATE SCHEMA refined;
 
+```sql
 CREATE TABLE refined.finished_trips (
     id BIGSERIAL PRIMARY KEY,
     trip_id TEXT,
@@ -37,7 +47,7 @@ CREATE TABLE refined.finished_trips (
     average_speed DOUBLE PRECISION
 );
 
-
+## A consulta abaixo cria a tabela refined.latest_positions a cada execução
 CREATE TABLE refined.latest_positions AS
 WITH latest_snapshot AS (
     -- 1. Captura o timestamp exato do último lote de extração
@@ -88,18 +98,6 @@ CREATE TABLE refined.latest_positions (
     distance_to_last_stop DOUBLE PRECISION
 );
 
-
-
-CREATE TABLE refined.finished_trips (
-    id BIGSERIAL PRIMARY KEY,
-    trip_id TEXT,
-    vehicle_id INTEGER,
-    trip_start_time TIMESTAMPTZ,
-    trip_end_time TIMESTAMPTZ,
-    duration INTERVAL,
-    is_circular BOOLEAN,
-    average_speed DOUBLE PRECISION
-);
 
 #Tabela usada apenas em testes de algoritmo experimental
 CREATE TABLE trusted.ongoing_trips (
