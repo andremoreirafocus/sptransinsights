@@ -1,10 +1,27 @@
 import subprocess
+import platform
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-def is_disk_space_ok(threshold=95):
+def is_wsl():
+    # Method 1: Check the kernel release string
+    if "microsoft" in platform.release().lower():
+        return True
+
+    # Method 2: Check /proc/version for the 'Microsoft' signature
+    try:
+        with open("/proc/version", "r") as f:
+            if "microsoft" in f.read().lower():
+                return True
+    except FileNotFoundError:
+        pass
+
+    return False
+
+
+def is_disk_space_ok_wsl(threshold=95):
     # 1. Define threshold via param
     # 2. Define the command you want to run
     command = "df -kh | grep /mnt/c | tr -s ' '| cut -f5 -d' ' | cut -f1 -d'%'"
@@ -26,7 +43,7 @@ def is_disk_space_ok(threshold=95):
             )
         else:
             logger.error(
-                f"CRITICAL: Disk usage in C drive ({output_value}) is greater than threshold ({threshold})."
+                f"CRITICAL: Disk usage in C drive ({output_value}) is greater or equal than threshold ({threshold})."
             )
         return disk_space_ok
 
@@ -41,4 +58,4 @@ def is_disk_space_ok(threshold=95):
 
 
 if __name__ == "__main__":
-    is_disk_space_ok()
+    is_disk_space_ok_wsl()

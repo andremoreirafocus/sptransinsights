@@ -5,7 +5,7 @@ from src.services.buses_positions import (
 )
 from src.infra.storage import save_data_to_json_file
 from src.infra.message_broker import sendKafka
-from src.infra.check_disk_space import is_disk_space_ok
+from src.infra.wsl_functions import is_disk_space_ok_wsl, is_wsl
 
 from src.infra.timing_functions import adjust_start_time, interval_adjustment_needed
 from src.config import get_config
@@ -42,11 +42,11 @@ def main():
     adjust_start_time()
     while True:
         delta = interval_adjustment_needed()
-        if not is_disk_space_ok():
-            logger.error("Disk space critical: skipping execution")
-            print("Disk space critical: skipping execution")
-            time.sleep(INTERVAL)
-            continue
+        if is_wsl():
+            if not is_disk_space_ok_wsl():
+                logger.error("Disk space critical: skipping execution")
+                time.sleep(INTERVAL)
+                continue
         retries = 0
         back_off = 1
         buses_positions_payload = None

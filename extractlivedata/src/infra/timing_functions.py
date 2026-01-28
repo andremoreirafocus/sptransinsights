@@ -24,7 +24,8 @@ def adjust_start_time():
         current_minute = now.minute
         current_second = now.second
         if current_minute % 2 != 0:
-            print(f"Minute {current_minute} is odd")
+            logger.info("Syncing to 2 minute window start...")
+            # print(f"Minute {current_minute} is odd")
         else:
             if current_second < 5:
                 logger.info("Synced to 2 minute window start...")
@@ -32,7 +33,7 @@ def adjust_start_time():
             else:
                 logger.info("Syncing to 2 minute window start...")
         # Print the results
-        print(f"Current minutes:seconds {current_minute:02d}:{current_second:02d}")
+        # print(f"Current minutes:seconds {current_minute:02d}:{current_second:02d}")
         time.sleep(2)
 
 
