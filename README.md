@@ -10,7 +10,7 @@ Cada subprojeto possui um README com informações sobre o seu papel e os requis
 ![Diagrama da solução](./diagramasolucao.png)
 
 Para implementar a solução foram adotados os componentes:
-- Airflow: para orquestração de processos recorrentes do pipeline através de diversas DAGs utilizando o Python Operator.
+- Airflow: para orquestração de processos recorrentes do pipeline através de diversas DAGs utilizando o Python Operator. ![Para mais informações:](./airflow/README.md)
     - DAG gtfs: subprocesso de extractload, que extrai os dados GTFS da SPTRANS e salva na camada raw. ![Para mais informações:](./gtfsextractload/README.md) e transform: subprocesso processo que, a partir dos dados GTFS da SPTRANS, cria tabelas na camada trusted, implementada no Postgresql devido ao baixo volume dos dados e à facilidade de implementação, reduzindo a complexidade da arquitetura. Além disso, este processo cria uma tabela de dados de viagens utilizada para enriquecer os dados de posição extraídos da API SPTrans. ![Para mais informações:](./gtfstransform/README.md)
     - DAG transformlivedata: processo de transformação dos dados brutos de posição da camada raw em dados enriquecidos na camada trusted. ![Para mais informações:](./transformlivedata/README.md)
     - DAG refinelivedata: processo de transformação para criação das informações de viagens na camada refined a partir dos dados da camada trusted. ![Para mais informações:](./refinelivedata/README.md)
@@ -25,13 +25,13 @@ transformação
 
 ## Para executar o Sptransinsights
 Ao iniciar o projeto seguindo as instruções abaixo, deve-se em seguida, executar alguns comandos de inicialização que estão discriminados em cada subprojeto, especialmente:
-- airflow
-- gtfsextract
-- transformlivedata
-- refinelivedata
+- ![Airflow](./airflow/README.md)
+- ![gtfsextractload](./airflow/README.md)
+- ![transformlivedata](./transformlivedata/README.md)
+- ![refinelivedata](./refinelivedata/README.md)
 
 Para iniciar o projeto:
- Se o arquivo .env não existir, crie com o seguinte conteúdo:
+ Se o arquivo .env não existir na raiz do projeto, crie-o com o seguinte conteúdo:
   MINIO_VERSION=RELEASE.2025-02-28T09-55-16Z
   POSTGRES_DEBEZIUM=3.0
   CONFLUENT_VERSION=7.6.1

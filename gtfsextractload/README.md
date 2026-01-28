@@ -13,7 +13,6 @@ MINIO_ENDPOINT=<hostname:port> # format
 ACCESS_KEY=<key>
 SECRET_KEY=<secret>
 
-
 Para instalar os requisitos:
 - cd <diretorio deste subprojeto>
 - python3 -m venv .env
@@ -22,6 +21,8 @@ Para instalar os requisitos:
 
 Para executar: 
 python ./main.py
+
+Se o arquivo .env não existir na raiz do projeto, crie-o com as variáveis enumeradas acima
 
 Instruções adicionais:
 - Para obter as credenciais cadastre-se no portal do desenvolvedor da SPTRANS

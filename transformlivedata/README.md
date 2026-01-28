@@ -28,7 +28,10 @@ Para instalar os requisitos:
 - pip install -r requirements.txt
 
 Para executar: 
+Criar tabelas conforme instruções abaixo
 python ./main.py
+
+Se o arquivo .env não existir na raiz do projeto, crie-o com as variáveis enumeradas acima
 
 Instruções adicionais:
 

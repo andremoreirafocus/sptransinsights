@@ -21,6 +21,8 @@ Para instalar os requisitos:
 Para executar: 
 python ./main.py
 
+Se o arquivo .env não existir na raiz do projeto, crie-o com as variáveis enumeradas acima
+
 Para buildar o container
 cd ./loadlivedata
 docker build -t sptrans-loadlivedata -f Dockerfile .

@@ -30,7 +30,10 @@ DB_PASSWORD=<password>
 DB_SSLMODE="prefer"
 
 ## Para executar: 
+Criar tabelas conforme instruções abaixo
 python ./main.py
+
+Se o arquivo .env não existir na raiz do projeto, crie-o com as variáveis enumeradas acima
 
 ## Configurações de Banco de dados que devem ser feitas antes da execução:
 CREATE SCHEMA refined;

@@ -27,6 +27,8 @@ Para instalar os requisitos:
     Criar tabelas conforme instruções abaixo
     python ./main.py
 
+    Se o arquivo .env não existir na raiz do projeto, crie-o com as variáveis enumeradas acima
+
 ## Instruções adicionais:
 docker exec -it postgres bash
 psql -U postgres -W
