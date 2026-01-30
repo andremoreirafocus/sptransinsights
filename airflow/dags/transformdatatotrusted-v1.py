@@ -23,7 +23,7 @@ default_args = {
     "max_active_runs": 1,
     "email_on_failure": False,
     "email_on_retry": False,
-    "retries": 0,
+    "retries": 3,
 }
 
 

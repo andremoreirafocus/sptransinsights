@@ -17,7 +17,7 @@ default_args = {
     "max_active_runs": 1,
     "email_on_failure": False,
     "email_on_retry": False,
-    # "retries": 0,
+    "retries": 2,
 }
 
 
@@ -51,7 +51,7 @@ with DAG(
     "refinefinishedtrips-v1",
     default_args=default_args,
     description="Load raw data from MinIO, process it, and store it in PG",
-    schedule_interval="*/15 * * * * *",  # Use cron expression for every minute
+    schedule_interval="*/15 * * * *",  # Use cron expression for every minute
     catchup=False,
 ) as dag:
     get_lines_and_vehicles_task = PythonOperator(
